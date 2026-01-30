@@ -324,7 +324,8 @@ if HAS_YAML:
     class OrderedDumper(yaml.Dumper):
         def represent_dict(self, data):
             LOGGER.debug(
-                f"Entering OrderedDumper.represent_dict with data type: {type(data)}"
+                "Entering OrderedDumper.represent_dict with data type: %s",
+                type(data),
             )
             LOGGER.debug("Exiting OrderedDumper.represent_dict")
             return self.represent_mapping("tag:yaml.org,2002:map", data.items())
