@@ -488,7 +488,7 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
             if token in name_hierarchy:
                 self.log("Entering if: token found in name_hierarchy", "INFO")
                 self.log("Exiting get_parent_name with derived parent", "INFO")
-                return SingleQuotedStr(name_hierarchy.split(token)[0])
+                return SingleQuotedStr(name_hierarchy.rsplit(token, 1)[0])
 
         self.log("Exiting get_parent_name with None", "INFO")
         return None
