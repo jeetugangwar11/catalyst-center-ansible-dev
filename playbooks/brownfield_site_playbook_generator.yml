@@ -22,7 +22,7 @@
           # ====================================================================================
           # Scenario 1: Generate all site configurations (area, building, floor)
           # ====================================================================================
-          # - generate_all_configurations: true
+          - generate_all_configurations: true
           #   file_path: "/tmp/all_site_configurations.yaml"
 
           # ====================================================================================
@@ -165,22 +165,22 @@
           # Demonstrates fetching all site component types with varied filter combinations
           # ====================================================================================
           # - file_path: "/tmp/all_site_components_custom_filters.yaml"
-          - component_specific_filters:
-              components_list: ["area", "building", "floor"]
-              area:
-                - site_name:
-                    - "USA"
-                    - "chennai"
-              building:
-                - parent_site_name:
-                    - "Global/chennai"
-                    - "Global/USA/San Jose"
-              floor:
-                - rf_model:
-                    - "Cubes And Walled Offices"
-                - parent_site_name:
-                    - "Global/USA/San Francisco"
-                    - "Global/USA/San Jose/Building1"
+          # - component_specific_filters:
+          #     components_list: ["area", "building", "floor"]
+          #     area:
+          #       - site_name:
+          #           - "USA"
+          #           - "chennai"
+          #     building:
+          #       - parent_site_name:
+          #           - "Global/chennai"
+          #           - "Global/USA/San Jose"
+          #     floor:
+          #       - rf_model:
+          #           - "Cubes And Walled Offices"
+          #       - parent_site_name:
+          #           - "Global/USA/San Francisco"
+          #           - "Global/USA/San Jose/Building1"
 
           # ====================================================================================
           # Scenario 14: Fetch All without Filters presented in components_list
