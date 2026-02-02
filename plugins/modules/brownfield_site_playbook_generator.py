@@ -24,12 +24,11 @@ extends_documentation_fragment:
 - cisco.dnac.workflow_manager_params
 author:
 - Vidhya Rathinam (@VidhyaGit)
+reviewers:
+- Archit Soni (@koderchit)
+- MOHAMED RAFEEK ABDUL KADHAR (@md-rafeek)
+- Madhan Sankaranarayanan (@madhansansel)
 options:
-  config_verify:
-    description: Set to True to verify the Cisco Catalyst
-      Center after applying the playbook config.
-    type: bool
-    default: false
   state:
     description: The desired state of Cisco Catalyst Center after module execution.
     type: str
@@ -84,48 +83,58 @@ options:
           areas:
             description:
             - Areas to filter sites by site name or parent site name.
+            - You can also pass a list of site names under site_name to filter multiple areas.
             type: list
             elements: dict
             suboptions:
               site_name:
                 description:
                 - Site name to filter areas by area name.
+                - Can be a list of site names to match multiple areas.
                 type: str
               parent_site_name:
                 description:
                 - Parent site name to filter areas by parent site name.
+                - Can be a list of parent site names to match multiple areas.
                 type: str
           buildings:
             description:
             - Buildings to filter sites by site name or parent site name.
+            - You can also pass a list of site names under site_name to filter multiple buildings.
             type: list
             elements: dict
             suboptions:
               site_name:
                 description:
                 - Site name to filter buildings by building name.
+                - Can be a list of site names to match multiple buildings.
                 type: str
               parent_site_name:
                 description:
                 - Parent site name to filter buildings by parent site name.
+                - Can be a list of parent site names to match multiple buildings.
                 type: str
           floors:
             description:
             - Floors to filter sites by site name, parent site name, or RF model.
+            - You can also pass a list of site names under site_name to filter multiple floors.
             type: list
             elements: dict
             suboptions:
               site_name:
                 description:
                 - Site name to filter floors by floor name.
+                - Can be a list of site names to match multiple floors.
                 type: str
               parent_site_name:
                 description:
                 - Parent site name to filter floors by parent site name.
+                - Can be a list of parent site names to match multiple floors.
                 type: str
               rf_model:
                 description:
                 - RF model to filter floors by RF model type.
+                - Can be a list of RF model types to match multiple floors.
                 type: str
 requirements:
 - dnacentersdk >= 2.3.7.9
@@ -236,9 +245,10 @@ EXAMPLES = r"""
       - file_path: "/tmp/catc_site_components_config.yaml"
         component_specific_filters:
           components_list: ["area"]
-          areas:
-            - site_name: "Global/USA"
-            - site_name: "Global/Europe"
+          area:
+            - site_name:
+                - "Global/USA"
+                - "Global/Europe"
 
 - name: Generate YAML Configuration for buildings and floors with multiple filters
   cisco.dnac.brownfield_site_playbook_generator:
@@ -257,11 +267,16 @@ EXAMPLES = r"""
         component_specific_filters:
           components_list: ["building", "floor"]
           buildings:
-            - site_name: "Global/USA/San Jose/Building1"
-            - site_name: "Global/USA/San Jose/Building2"
+            - site_name:
+                - "Global/USA/San Jose/Building1"
+                - "Global/USA/San Jose/Building2"
           floors:
-            - parent_site_name: "Global/USA/San Jose/Building1"
-            - rf_model: "Cubes And Walled Offices"
+            - parent_site_name:
+                - "Global/USA/San Jose/Building1"
+                - "Global/USA/San Jose/Building2"
+            - rf_model:
+                - "Cubes And Walled Offices"
+                - "Drywall Office Only"
 """
 
 
@@ -273,12 +288,17 @@ response_1:
   type: dict
   sample: >
     {
-      "response":
-        {
-          "response": String,
-          "version": String
+        "msg": {
+            "YAML config generation Task succeeded for module 'site_workflow_manager'.": {
+                "file_path": "site_workflow_manager_playbook_2026-02-02_16-04-06.yml"
+            }
         },
-      "msg": String
+        "response": {
+            "YAML config generation Task succeeded for module 'site_workflow_manager'.": {
+                "file_path": "site_workflow_manager_playbook_2026-02-02_16-04-06.yml"
+            }
+        },
+        "status": "success"
     }
 # Case_2: Error Scenario
 response_2:
@@ -287,8 +307,12 @@ response_2:
   type: list
   sample: >
     {
-      "response": [],
-      "msg": String
+      "msg": {
+        "message": "No configurations or components to process for module 'site_workflow_manager'. Verify input filters or configuration."
+      },
+      "response": {
+        "message": "No configurations or components to process for module 'site_workflow_manager'. Verify input filters or configuration."
+      }
     }
 """
 
@@ -337,14 +361,19 @@ else:
 
 class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
     """
-    A class for generator playbook files for site hierarchy deployed within the Cisco Catalyst Center using the GET APIs.
+    Description: A class for generator playbook files for site hierarchy deployed within the Cisco Catalyst Center using the GET APIs.
+
+    Inherits from:
+    - DnacBase: Provides base functionality for interacting with Cisco Catalyst Center.
+    - BrownFieldHelper: Provides helper methods for brownfield operations.
+
     """
 
     values_to_nullify = ["NOT CONFIGURED"]
 
     def __init__(self, module):
         """
-        Initialize an instance of the class.
+        Description: Initialize an instance of the class.
         Args:
             module: The module associated with the class instance.
         Returns:
@@ -362,7 +391,9 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def validate_input(self):
         """
-        Validates the input configuration parameters for the playbook.
+        Description: Validates the input configuration parameters for the playbook.
+        Args:
+            self: Refers to the instance of the class containing definitions of helper methods.
         Returns:
             object: An instance of the class with updated attributes:
                 self.msg: A message describing the validation result.
@@ -460,7 +491,15 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def get_parent_name(self, detail):
         """
-        Derives parent_name from available fields in site detail.
+        Description:
+            Derives parent_name from available fields in site detail.
+
+        Args:
+            detail (dict): A dictionary containing site details.
+
+        Returns:
+            SingleQuotedStr or None: The derived parent_name wrapped in SingleQuotedStr,
+            or None if it cannot be determined.
         """
         self.log("Entering get_parent_name", "INFO")
 
@@ -494,23 +533,73 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
         return None
 
     def get_site_type_area(self, detail):
-        self.log("Entering get_site_type_area", "INFO")
-        self.log("Exiting get_site_type_area with 'area'", "INFO")
+        self.log("Inside get_site_type_area", "INFO")
         return "area"
 
     def get_site_type_building(self, detail):
-        self.log("Entering get_site_type_building", "INFO")
-        self.log("Exiting get_site_type_building with 'building'", "INFO")
+        self.log("Inside get_site_type_building", "INFO")
         return "building"
 
     def get_site_type_floor(self, detail):
-        self.log("Entering get_site_type_floor", "INFO")
-        self.log("Exiting get_site_type_floor with 'floor'", "INFO")
+        self.log("Inside get_site_type_floor", "INFO")
         return "floor"
+        return "floor"
+
+    def dedupe_site_details(self, details, component_name):
+        """
+        Description:
+            De-duplicates site details using composite key of (name, parent_name).
+
+        Args:
+            details (list): List of site detail dictionaries.
+            component_name (str): Component label for logging.
+        Returns:
+            list: De-duplicated list preserving order.
+        """
+        if not details:
+            return details
+
+        seen = set()
+        deduped = []
+        for detail in details:
+            if not isinstance(detail, dict):
+                deduped.append(detail)
+                continue
+
+            name = detail.get("name")
+            parent = detail.get("parentName") or detail.get("parent_name")
+            if not parent:
+                parent = self.get_parent_name(detail)
+            parent_value = str(parent) if parent is not None else None
+
+            if not name or parent_value is None:
+                deduped.append(detail)
+                continue
+
+            key = (name, parent_value)
+            if key in seen:
+                continue
+
+            seen.add(key)
+            deduped.append(detail)
+
+        if len(deduped) != len(details):
+            self.log(
+                f"De-duplicated {component_name} details by (name, parent_name): "
+                f"{len(details)} -> {len(deduped)}",
+                "INFO",
+            )
+        return deduped
 
     def normalize_component_specific_filters(self, config):
         """
-        Normalizes component names in component_specific_filters to match internal schema keys.
+        Description: Normalizes component names in component_specific_filters to match internal schema keys.
+
+        Args:
+            config (dict): The configuration dictionary containing component_specific_filters.
+        Returns:
+            dict: The updated configuration dictionary with normalized component names.
+
         """
         self.log("Entering normalize_component_specific_filters", "INFO")
 
@@ -531,6 +620,50 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
             "floor": "floors",
         }
 
+        def normalize_site_filters(filters, component_name):
+            if not filters:
+                return filters
+            list_fields = ("site_name", "parent_site_name", "rf_model")
+
+            def expand_filter_item(item):
+                if not isinstance(item, dict):
+                    return [item]
+
+                for field in list_fields:
+                    if isinstance(item.get(field), list):
+                        expanded = []
+                        for value in item[field]:
+                            cloned = dict(item)
+                            cloned[field] = value
+                            expanded.append(cloned)
+                        return expanded
+                return [item]
+
+            if isinstance(filters, list):
+                normalized_list = []
+                for item in filters:
+                    if isinstance(item, str):
+                        normalized_list.append({"site_name": item})
+                        continue
+                    normalized_list.extend(expand_filter_item(item))
+                if normalized_list != filters:
+                    self.log(
+                        f"Normalized {component_name} filters to expand list values for site_name, parent_site_name, and rf_model.",
+                        "INFO",
+                    )
+                return normalized_list
+
+            if isinstance(filters, dict):
+                normalized_list = expand_filter_item(filters)
+                if normalized_list != [filters]:
+                    self.log(
+                        f"Normalized {component_name} filters to expand list values for site_name, parent_site_name, and rf_model.",
+                        "INFO",
+                    )
+                return normalized_list
+
+            return filters
+
         normalized_filters = {}
         for key, value in component_specific_filters.items():
             if key == "components_list" and isinstance(value, list):
@@ -540,7 +673,12 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
                 continue
 
             normalized_key = component_map.get(key, key)
-            normalized_filters[normalized_key] = value
+            if normalized_key in ("areas", "buildings", "floors"):
+                normalized_filters[normalized_key] = normalize_site_filters(
+                    value, normalized_key
+                )
+            else:
+                normalized_filters[normalized_key] = value
 
         if normalized_filters == component_specific_filters:
             self.log("Entering if: normalized_filters unchanged", "INFO")
@@ -558,8 +696,10 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def area_temp_spec(self):
         """
-        Constructs a temporary specification for areas.
+        Description: Constructs a temporary specification for areas.
 
+        Args:
+            self: Refers to the instance of the class containing definitions of helper methods.
         Returns:
             OrderedDict: An ordered dictionary defining the structure of area attributes.
         """
@@ -600,7 +740,10 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def building_temp_spec(self):
         """
-        Constructs a temporary specification for buildings.
+        Description: Constructs a temporary specification for buildings.
+
+        Args:
+            self: Refers to the instance of the class containing definitions of helper methods.
 
         Returns:
             OrderedDict: An ordered dictionary defining the structure of building attributes.
@@ -659,7 +802,10 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def floor_temp_spec(self):
         """
-        Constructs a temporary specification for floors.
+        Description: Constructs a temporary specification for floors.
+
+        Args:
+            self: Refers to the instance of the class containing definitions of helper methods.
 
         Returns:
             OrderedDict: An ordered dictionary defining the structure of floor attributes.
@@ -730,7 +876,7 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def get_areas_configuration(self, network_element, component_specific_filters=None):
         """
-        Retrieves areas based on the provided network element and component-specific filters.
+        Description: Retrieves areas based on the provided network element and component-specific filters.
 
         Args:
             network_element (dict): A dictionary containing the API family and function for retrieving areas.
@@ -798,6 +944,8 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
             self.log(f"Retrieved area details: {area_details}", "INFO")
             final_areas.extend(area_details)
 
+        final_areas = self.dedupe_site_details(final_areas, "areas")
+
         # Modify area details using temp_spec
         area_temp_spec = self.area_temp_spec()
         areas_details = self.modify_parameters(area_temp_spec, final_areas)
@@ -814,7 +962,7 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
         self, network_element, component_specific_filters=None
     ):
         """
-        Retrieves buildings based on the provided network element and component-specific filters.
+        Description: Retrieves buildings based on the provided network element and component-specific filters.
 
         Args:
             network_element (dict): A dictionary containing the API family and function for retrieving buildings.
@@ -881,6 +1029,8 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
             self.log(f"Retrieved building details: {building_details}", "INFO")
             final_buildings.extend(building_details)
 
+        final_buildings = self.dedupe_site_details(final_buildings, "buildings")
+
         # Modify building details using temp_spec
         building_temp_spec = self.building_temp_spec()
         buildings_details = self.modify_parameters(building_temp_spec, final_buildings)
@@ -897,7 +1047,7 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
         self, network_element, component_specific_filters=None
     ):
         """
-        Retrieves floors based on the provided network element and component-specific filters.
+        Description: Retrieves floors based on the provided network element and component-specific filters.
 
         Args:
             network_element (dict): A dictionary containing the API family and function for retrieving floors.
@@ -983,6 +1133,8 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
             self.log(f"Retrieved floor details: {floor_details}", "INFO")
             final_floors.extend(floor_details)
 
+        final_floors = self.dedupe_site_details(final_floors, "floors")
+
         # Modify floor details using temp_spec
         floor_temp_spec = self.floor_temp_spec()
         floors_details = self.modify_parameters(floor_temp_spec, final_floors)
@@ -997,7 +1149,7 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def yaml_config_generator(self, yaml_config_generator):
         """
-        Generates a YAML configuration file based on the provided parameters.
+        Description: Generates a YAML configuration file based on the provided parameters.
 
         Args:
             yaml_config_generator (dict): Contains file_path, global_filters, and component_specific_filters.
@@ -1135,11 +1287,13 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def get_want(self, config, state):
         """
-        Creates parameters for API calls based on the specified state.
+        Description: Creates parameters for API calls based on the specified state.
 
         Args:
             config (dict): The configuration data for the site elements.
             state (str): The desired state of the site elements ('gathered').
+        Returns:
+            self: The current instance with the desired state (want) set.
         """
 
         self.log("Entering get_want", "INFO")
@@ -1175,7 +1329,12 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
 
     def get_diff_gathered(self):
         """
-        Executes the gather operations for site configurations in the Cisco Catalyst Center.
+        Description: Executes the gather operations for site configurations in the Cisco Catalyst Center.
+
+        Args:
+            self: Refers to the instance of the class containing definitions of helper methods.
+        Returns:
+            self: The current instance with the operation results updated.
         """
 
         start_time = time.time()
@@ -1237,7 +1396,6 @@ def main():
         "dnac_log_append": {"type": "bool", "default": True},
         "dnac_log": {"type": "bool", "default": False},
         "validate_response_schema": {"type": "bool", "default": True},
-        "config_verify": {"type": "bool", "default": False},
         "dnac_api_task_timeout": {"type": "int", "default": 1200},
         "dnac_task_poll_interval": {"type": "int", "default": 2},
         "config": {"required": True, "type": "list", "elements": "dict"},
@@ -1263,8 +1421,8 @@ def main():
         )
         ccc_site_playbook_generator.msg = (
             "The specified version '{0}' does not support the YAML Playbook generation "
-            "for Site Workflow Manager Module. Supported versions start from '2.3.7.9' onwards. "
-            "Version '2.3.7.9' introduces APIs for retrieving site hierarchy including "
+            "for Site Workflow Manager Module. Supported versions start from '2.3.5.3' onwards. "
+            "Version '2.3.5.3' introduces APIs for retrieving site hierarchy including "
             "areas, buildings, and floors from the Catalyst Center".format(
                 ccc_site_playbook_generator.get_ccc_version()
             )

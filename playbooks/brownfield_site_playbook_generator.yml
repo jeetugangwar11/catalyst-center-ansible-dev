@@ -22,7 +22,7 @@
           # ====================================================================================
           # Scenario 1: Generate all site configurations (area, building, floor)
           # ====================================================================================
-          - generate_all_configurations: true
+          # - generate_all_configurations: true
           #   file_path: "/tmp/all_site_configurations.yaml"
 
           # ====================================================================================
@@ -33,7 +33,8 @@
           #   component_specific_filters:
           #     components_list: ["area"]
           #     area:
-          #       - site_name: "Global/USA"
+          #       - site_name:
+          #           - "Global/USA"
 
           # ====================================================================================
           # Scenario 3: Sites - Filter by Site Name (Multiple)
@@ -43,8 +44,9 @@
           #   component_specific_filters:
           #     components_list: ["area"]
           #     area:
-          #       - site_name: "Global/USA"
-          #       - site_name: "Global/Europe"
+          #       - site_name:
+          #           - "Global/USA"
+          #           - "Global/Europe"
 
           # ====================================================================================
           # Scenario 4: building - Filter by Building Name (Single)
@@ -54,7 +56,8 @@
           #   component_specific_filters:
           #     components_list: ["building"]
           #     building:
-          #       - site_name: "Global/USA/San Jose/Building1"
+          #       - site_name:
+          #           - "Global/USA/San Jose/Building1"
 
           # ====================================================================================
           # Scenario 5: building - Filter by Building Name (Multiple)
@@ -64,8 +67,9 @@
           #   component_specific_filters:
           #     components_list: ["building"]
           #     building:
-          #       - site_name: "Global/USA/San Jose/Building1"
-          #       - site_name: "Global/USA/San Jose/Building2"
+          #       - site_name:
+          #           - "Global/USA/San Jose/Building1"
+          #           - "Global/USA/San Jose/Building2"
 
           # ====================================================================================
           # Scenario 6: building - Filter by Parent Site
@@ -75,7 +79,9 @@
           #   component_specific_filters:
           #     components_list: ["building"]
           #     building:
-          #       - parent_site_name: "Global/USA/San Jose"
+          #       - parent_site_name:
+          #           - "Global/USA/San Jose"
+          #           - "Global/USA/San Francisco"
 
           # ====================================================================================
           # Scenario 7: floor - Filter by Floor Name (Single)
@@ -85,7 +91,8 @@
           #   component_specific_filters:
           #     components_list: ["floor"]
           #     floor:
-          #       - site_name: "Global/USA/San Jose/Building1/Floor1"
+          #       - site_name:
+          #           - "Global/USA/San Jose/Building1/Floor1"
 
           # ====================================================================================
           # Scenario 8: floor - Filter by Floor Name (Multiple)
@@ -95,8 +102,9 @@
           #   component_specific_filters:
           #     components_list: ["floor"]
           #     floor:
-          #       - site_name: "Global/USA/San Jose/Building1/Floor1"
-          #       - site_name: "Global/USA/San Jose/Building1/Floor2"
+          #       - site_name:
+          #           - "Global/USA/San Jose/Building1/Floor1"
+          #           - "Global/USA/San Jose/Building1/Floor2"
 
           # ====================================================================================
           # Scenario 9: floor - Filter by Building
@@ -106,7 +114,9 @@
           #   component_specific_filters:
           #     components_list: ["floor"]
           #     floor:
-          #       - parent_site_name: "Global/USA/San Jose/Building1"
+          #       - parent_site_name:
+          #           - "Global/USA/San Jose/Building1"
+          #           - "Global/USA/San Jose/Building2"
 
           # ====================================================================================
           # Scenario 10: floor - Filter by RF Model
@@ -116,7 +126,9 @@
           #   component_specific_filters:
           #     components_list: ["floor"]
           #     floor:
-          #       - rf_model: "Cubes And Walled Offices"
+          #       - rf_model:
+          #           - "Cubes And Walled Offices"
+          #           - "Drywall Office Only"
 
           # ====================================================================================
           # Scenario 11: Multiple Site Types - Fetch area and building
@@ -126,9 +138,11 @@
           #   component_specific_filters:
           #     components_list: ["area", "building"]
           #     area:
-          #       - site_name: "Global/USA"
+          #       - site_name:
+          #           - "Global/USA"
           #     building:
-          #       - site_name: "Global/USA/San Jose/Building1"
+          #       - site_name:
+          #           - "Global/USA/San Jose/Building1"
 
           # ====================================================================================
           # Scenario 12: Multiple Site Types - Fetch building and floor
@@ -138,24 +152,35 @@
           #   component_specific_filters:
           #     components_list: ["building", "floor"]
           #     building:
-          #       - parent_site_name: "Global/USA/San Jose"
+          #       - parent_site_name:
+          #           - "Global/USA/San Jose"
+          #           - "Global/USA/San Francisco"
           #     floor:
-          #       - parent_site_name: "Global/USA/San Jose/Building1"
+          #       - parent_site_name:
+          #           - "Global/USA/San Jose/Building1"
+          #           - "Global/USA/San Jose/Building2"
 
           # ====================================================================================
           # Scenario 13: All Site Components with Different Filters
           # Demonstrates fetching all site component types with varied filter combinations
           # ====================================================================================
           # - file_path: "/tmp/all_site_components_custom_filters.yaml"
-          # - component_specific_filters:
-          #     components_list: ["area", "building", "floor"]
-          #     area:
-          #       - site_name: "USA"
-          #     building:
-          #       - parent_site_name: "Global/chennai"
-          #     floor:
-          #      # - rf_model: "Cubes And Walled Offices"
-          #       - parent_site_name: "Global/USA/San Francisco"
+          - component_specific_filters:
+              components_list: ["area", "building", "floor"]
+              area:
+                - site_name:
+                    - "USA"
+                    - "chennai"
+              building:
+                - parent_site_name:
+                    - "Global/chennai"
+                    - "Global/USA/San Jose"
+              floor:
+                - rf_model:
+                    - "Cubes And Walled Offices"
+                - parent_site_name:
+                    - "Global/USA/San Francisco"
+                    - "Global/USA/San Jose/Building1"
 
           # ====================================================================================
           # Scenario 14: Fetch All without Filters presented in components_list
@@ -173,7 +198,10 @@
           # - component_specific_filters:
           #     components_list: ["building"]
           #     building:
-          #       - site_name: "Global/USA/San Jose/Building1"
+          #       - site_name:
+          #           - "Global/USA/San Francisco/Building1"
+          #           - "Global/USA/San Francisco/Building2"
+          #           - "Global/USA/San Francisco/Building3"
 
           # ====================================================================================
           # Scenario 16: Generate building-only config in current working directory
