@@ -10,8 +10,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas"],
-        "areas": [
+        "components_list": ["area"],
+        "area": [
           {
             "site_name": "Global/USA"
           }
@@ -24,8 +24,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas"],
-        "areas": [
+        "components_list": ["area"],
+        "area": [
           {
             "site_name": "Global/USA"
           },
@@ -41,8 +41,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas"],
-        "areas": [
+        "components_list": ["area"],
+        "area": [
           {
             "parent_site_name": "Global"
           }
@@ -55,8 +55,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["buildings"],
-        "buildings": [
+        "components_list": ["building"],
+        "building": [
           {
             "site_name": "Global/USA/San Jose/Building1"
           }
@@ -69,8 +69,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["buildings"],
-        "buildings": [
+        "components_list": ["building"],
+        "building": [
           {
             "site_name": "Global/USA/San Jose/Building1"
           },
@@ -86,8 +86,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["buildings"],
-        "buildings": [
+        "components_list": ["building"],
+        "building": [
           {
             "parent_site_name": "Global/USA/San Jose"
           }
@@ -100,8 +100,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["floors"],
-        "floors": [
+        "components_list": ["floor"],
+        "floor": [
           {
             "site_name": "Global/USA/San Jose/Building1/Floor1"
           }
@@ -114,8 +114,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["floors"],
-        "floors": [
+        "components_list": ["floor"],
+        "floor": [
           {
             "site_name": "Global/USA/San Jose/Building1/Floor1"
           },
@@ -131,8 +131,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["floors"],
-        "floors": [
+        "components_list": ["floor"],
+        "floor": [
           {
             "parent_site_name": "Global/USA/San Jose/Building1"
           }
@@ -145,8 +145,8 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["floors"],
-        "floors": [
+        "components_list": ["floor"],
+        "floor": [
           {
             "rf_model": "Cubes And Walled Offices"
           }
@@ -159,13 +159,13 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas", "buildings"],
-        "areas": [
+        "components_list": ["area", "building"],
+        "area": [
           {
             "site_name": "Global/USA"
           }
         ],
-        "buildings": [
+        "building": [
           {
             "site_name": "Global/USA/San Jose/Building1"
           }
@@ -178,13 +178,13 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["buildings", "floors"],
-        "buildings": [
+        "components_list": ["building", "floor"],
+        "building": [
           {
             "parent_site_name": "Global/USA/San Jose"
           }
         ],
-        "floors": [
+        "floor": [
           {
             "parent_site_name": "Global/USA/San Jose/Building1"
           }
@@ -197,18 +197,18 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas", "buildings", "floors"],
-        "areas": [
+        "components_list": ["area", "building", "floor"],
+        "area": [
           {
             "site_name": "Global/USA"
           }
         ],
-        "buildings": [
+        "building": [
           {
             "parent_site_name": "Global/USA/San Jose"
           }
         ],
-        "floors": [
+        "floor": [
           {
             "rf_model": "Drywall Office Only"
           }
@@ -221,7 +221,7 @@
     {
       "file_path": "/tmp/test_site_demo.yaml",
       "component_specific_filters": {
-        "components_list": ["areas"]
+        "components_list": ["area"]
       }
     }
   ],
@@ -229,8 +229,8 @@
   "playbook_config_no_file_path": [
     {
       "component_specific_filters": {
-        "components_list": ["buildings"],
-        "buildings": [
+        "components_list": ["building"],
+        "building": [
           {
             "site_name": "Global/USA/San Jose/Building1"
           }
