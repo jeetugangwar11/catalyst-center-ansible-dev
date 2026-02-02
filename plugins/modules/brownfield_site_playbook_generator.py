@@ -542,7 +542,6 @@ class SitePlaybookGenerator(DnacBase, BrownFieldHelper):
     def get_site_type_floor(self, detail):
         self.log("Inside get_site_type_floor", "INFO")
         return "floor"
-        return "floor"
 
     def dedupe_site_details(self, details, component_name):
         """
