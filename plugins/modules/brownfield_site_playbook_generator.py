@@ -24,10 +24,9 @@ extends_documentation_fragment:
 - cisco.dnac.workflow_manager_params
 author:
 - Vidhya Rathinam (@VidhyaGit)
-reviewers:
-- Archit Soni (@koderchit)
-- MOHAMED RAFEEK ABDUL KADHAR (@md-rafeek)
-- Madhan Sankaranarayanan (@madhansansel)
+- Archit Soni (@koderchit -reviewer)
+- MOHAMED RAFEEK ABDUL KADHAR (@md-rafeek -reviewer)
+- Madhan Sankaranarayanan (@madhansansel -reviewer)
 options:
   state:
     description: The desired state of Cisco Catalyst Center after module execution.
